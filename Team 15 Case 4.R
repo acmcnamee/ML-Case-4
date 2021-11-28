@@ -82,7 +82,7 @@ mean(pred==covid$intubated)
 # PROBLEM 2
 # dividing the data into training and testing groups 
 library(caret)
-divideData <- createDataPartition(covid$intubated,p=.8, list=FALSE)
+divideData <- createDataPartition(covid$intubated,p=.3, list=FALSE)
 train <- covid[divideData,]
 test <- covid[-divideData,]
 
