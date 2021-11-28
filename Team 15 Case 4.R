@@ -77,7 +77,7 @@ mean(pred==covid$intubated)
   # Accuracy Rate: 0.818078
 
 
-
+#################################
 
 # PROBLEM 2
 # dividing the data into training and testing groups 
@@ -96,6 +96,7 @@ summary(logCovid2)
 # 3) Strongly Influential Outliers
 
 
+###############################
 
 ## LDA MODEL
 
@@ -135,21 +136,34 @@ names(prediction) # "class"     "posterior" "x"
 
 ## Calculating accuracy rates
 mean(prediction$class == testtransformed$intubated) 
-  # 0.8181587 = 81.82% Test Accuracy Rate; our model correctly classifies observations 81.82% of the time
+  # 0.8179182 = 81.79% Test Accuracy Rate; our model correctly classifies observations 81.79% of the time
 table(prediction$class, testtransformed$intubated) # confusion matrix
-  #        No   Yes
-  # No  12894  2866
-  # Yes     0     1
+#  No   Yes
+#  No  36097  8028
+#  Yes     8     1
 
 
+# LDA Regression Equation
+# Interpretation
 
+
+#################################
 
 
 # QDA MODEL
 
+#################################
+
 # KNN MODEL
 
+#################################
+
+
 # COMPARING ACCURACY RATES
+
+
+#################################
+
 
 # CONCLUSION AND ANALYSIS
 
