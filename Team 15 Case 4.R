@@ -82,7 +82,7 @@ mean(pred==covid$intubated)
 # PROBLEM 2
 # dividing the data into training and testing groups 
 library(caret)
-divideData <- createDataPartition(covid$intubated,p=.3, list=FALSE)
+divideData <- createDataPartition(covid$intubated,p=.8, list=FALSE)
 train <- covid[divideData,]
 test <- covid[-divideData,]
 
@@ -151,6 +151,12 @@ table(prediction$class, testtransformed$intubated) # confusion matrix
 
 
 # QDA MODEL
+qdamodel <- qda(intubated~., data=traintransformed)
+  # Error in qda.default(x, grouping, ...) : 
+  # some group is too small for 'qda'
+  # error message interpretation: qda is a more sophisticated technique, so it essentially needs a larger sample size
+  # this model will not run!! (****need to confirm and put interpretation here************)
+
 
 #################################
 
