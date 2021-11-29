@@ -82,12 +82,20 @@ mean(pred==covid$intubated)
 # PROBLEM 2
 # dividing the data into training and testing groups 
 library(caret)
-divideData <- createDataPartition(covid$intubated,p=.3, list=FALSE)
+divideData <- createDataPartition(covid$intubated,p=.8, list=FALSE)
 train <- covid[divideData,]
 test <- covid[-divideData,]
 
 ## LOGISTIC REGRESSION   (****NEED HELP HERE***)
 logisticmodel <- glm(intubated~., data=train)
+
+# Error in glm.fit(x = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  : 
+# NA/NaN/Inf in 'y'
+# In addition: Warning messages:
+  # 1: In Ops.factor(y, mu) : '-' not meaningful for factors
+  # 2: In Ops.factor(eta, offset) : '-' not meaningful for factors
+  # 3: In Ops.factor(y, mu) : '-' not meaningful for factors
+
 summary(logisticmodel)
 
 # Test Assumptions
@@ -120,7 +128,7 @@ vif(ldamodel)
 library(lmtest)
 bptest(ldamodel)
 
-# 5) Independence (no repeated measures)
+# 5) Independence (no repeated measures)***
 
 
 ##Graphing the LDA
@@ -144,7 +152,11 @@ table(prediction$class, testtransformed$intubated) # confusion matrix
 
 
 # LDA Regression Equation
+
 # Interpretation
+
+# Confusion Matrix Interpretation
+
 
 
 #################################
@@ -153,8 +165,12 @@ table(prediction$class, testtransformed$intubated) # confusion matrix
 qdamodel <- qda(intubated~., data=traintransformed)
   # Error in qda.default(x, grouping, ...) : 
   # some group is too small for 'qda'
-  # error message interpretation: qda is a more sophisticated technique, so it essentially needs a larger sample size
-  # this model will not run!! (****need to confirm and put interpretation here************)
+
+  # changing the train/testing group to p=.8 still gives this error message:
+      # "Error in qda.default(x, grouping, ...) : rank deficiency in group No"
+
+  # Error Message Interpretation: As QDA is a more sophisticated technique, so it essentially needs a larger sample size.
+  # Essentially, this model will not run, as the sample size from our data is not sufficient to create our model. 
 
 
 #################################
@@ -166,31 +182,26 @@ knnmodel$bestTune
 # the best k is 5 (it is the one with the highest accuracy)
 
 
-## make predictions
+# Make predictions
 knnclass <- predict(knnmodel, newdata=test)
 head(knnclass)
-# we need to make sure that we have our dependent variable (ownership) correct - it is correct here because we have those two levels
-# of Nonowner and Owner
+  # we need to make sure that we have our dependent variable (intubated) correct - it is correct here because we have those two levels
+  # of Nonowner and Owner (********CHANGE THIS**************)
 
-## calculate accuracy rate
-table(knnclass, test$Ownership)
-  # knnclass   Nonowner Owner
-  # Nonowner        6     1
-  # Owner           6    11
+## Calculate Accuracy Rates:
+table(knnclass, test$intubated)
 
-# we correctly coded 6 nonowners and 11 owners
-# remember: Actual values are across the top
-# we mistakenly predicted 1 owner as an nonowner, and 6 nonowners as owner
 
-# accuracy rate: we can use either!!
+
+# Test Accuracy Rate
 mean(knnclass==test$intubated)
-# 0.7083333
 
-# error rate: we can use either!!
+# Test Error Rate
 mean(knnclass!=test$intubated)
-# 0.2916667
 
 confusionMatrix(knnclass, test$intubated)
+
+# Confusion Matrix Interpretation
 
 
 #################################
@@ -198,6 +209,10 @@ confusionMatrix(knnclass, test$intubated)
 
 # COMPARING ACCURACY RATES
 
+# Logistic Model:
+# LDA:
+# QDA:
+# KNN:
 
 #################################
 
