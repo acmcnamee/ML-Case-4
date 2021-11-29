@@ -10,8 +10,8 @@ str(covid)
 
 ## PROBLEM 1
 # Creating the Model:
-logCovid1 <- glm(intubated~age+Gender, family=binomial, data=covid)
-summary(logCovid1)
+shortlogmodel <- glm(intubated~age+Gender, family=binomial, data=covid)
+summary(shortlogmodel)
   # Both variables are significant.
 
 # Checking Assumptions:
@@ -29,7 +29,7 @@ summary(checkinteract)
 
 # 2) Absense of Multicollinearity
 library(car)
-vif(logCovid1)
+vif(shortlogmodel)
   # As the vif score is less than 5 and 10, multicollinearity between the age and Gender predictors is not a concern.  
     
 # 3) Strongly Influential Outliers
@@ -51,14 +51,14 @@ sum(abs(modelResults$.std.resid)>3)
 
 # Interpretations:
 
-coef(logCovid1)
+coef(shortlogmodel)
 # (Intercept)        age GenderWoman 
 # -2.1460002   0.0143261  -0.3001395 
 # An increase in age is associated with an increase in the probability of intubation. 
 # To be precise, a one-unit increase in age is associated with an increase in the log odds of being intubated by 0.0143461 units.
 # In addition, being a woman is associated with a 0.3001395 less chance of intubation than being a man.
 
-exp(coef(logCovid1))
+exp(coef(shortlogmodel))
 # (Intercept)         age GenderWoman 
 #   0.1169510   1.0144292   0.7407149 
 # We can further interpret the age coefficient as for every one year increase in age, the odds of intubation increases by a  
@@ -66,7 +66,7 @@ exp(coef(logCovid1))
 
 
 # Calculating Model Accuracy and Error Rates
-probs<-predict(logCovid1, type="response")
+probs<-predict(shortlogmodel, type="response")
 pred<-ifelse(probs>.5, "Yes", "No")
 table(pred, covid$intubated)              
 # pred    No   Yes
@@ -87,8 +87,8 @@ train <- covid[divideData,]
 test <- covid[-divideData,]
 
 ## LOGISTIC REGRESSION   (****NEED HELP HERE***)
-logCovid2 <- glm(intubated~.- pregnant, data=train)
-summary(logCovid2)
+logisticmodel <- glm(intubated~., data=train)
+summary(logisticmodel)
 
 # Test Assumptions
 # 1) Linearity of the Logit
@@ -107,31 +107,31 @@ testtransformed <- preprocessing %>% predict(test)
 
 ##Make an lda model with the training dataset that you just transformed. Print that model to see initial results. 
 library(MASS)
-covid.lda <- lda(intubated~., data=traintransformed)
-covid.lda
+ldamodel <- lda(intubated~., data=traintransformed)
+ldamodel
 
 # Checking assumptions
 # 1) No strongly influential outliers
 # 2) Multivariate normality
 # 3) Multicollinearity
-vif(covid.lda)
+vif(ldamodel)
 
 # 4) Homoscedasticity
 library(lmtest)
-bptest(covid.lda)
+bptest(ldamodel)
 
 # 5) Independence (no repeated measures)
 
 
 ##Graphing the LDA
-ldaforgraph <- cbind(traintransformed, predict(covid.lda)$x)
+ldaforgraph <- cbind(traintransformed, predict(ldamodel)$x)
 ggplot(ldaforgraph, aes(LD1)) + geom_point(aes(color=intubated))  # how to graph when we only have 1 LD?
 
 ##Make predictions with the ldamodel using the transformed test data.
-covid.lda.values <- predict(covid.lda)
+covid.lda.values <- predict(ldamodel)
 covid.lda.values
 
-prediction <- covid.lda %>% predict(testtransformed)
+prediction <- ldamodel %>% predict(testtransformed)
 names(prediction) # "class"     "posterior" "x"
 
 ## Calculating accuracy rates
@@ -149,7 +149,6 @@ table(prediction$class, testtransformed$intubated) # confusion matrix
 
 #################################
 
-
 # QDA MODEL
 qdamodel <- qda(intubated~., data=traintransformed)
   # Error in qda.default(x, grouping, ...) : 
@@ -161,6 +160,38 @@ qdamodel <- qda(intubated~., data=traintransformed)
 #################################
 
 # KNN MODEL
+knnmodel <- train(intubated~., data=train, method="knn", preProcess=c("center", "scale"))
+plot(knnmodel)
+knnmodel$bestTune
+# the best k is 5 (it is the one with the highest accuracy)
+
+
+## make predictions
+knnclass <- predict(knnmodel, newdata=test)
+head(knnclass)
+# we need to make sure that we have our dependent variable (ownership) correct - it is correct here because we have those two levels
+# of Nonowner and Owner
+
+## calculate accuracy rate
+table(knnclass, test$Ownership)
+  # knnclass   Nonowner Owner
+  # Nonowner        6     1
+  # Owner           6    11
+
+# we correctly coded 6 nonowners and 11 owners
+# remember: Actual values are across the top
+# we mistakenly predicted 1 owner as an nonowner, and 6 nonowners as owner
+
+# accuracy rate: we can use either!!
+mean(knnclass==test$intubated)
+# 0.7083333
+
+# error rate: we can use either!!
+mean(knnclass!=test$intubated)
+# 0.2916667
+
+confusionMatrix(knnclass, test$intubated)
+
 
 #################################
 
