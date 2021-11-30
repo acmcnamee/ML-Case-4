@@ -43,11 +43,17 @@ sum(abs(modelResults$.std.resid)>3)
   # A visual check with the ggplot also confirms that there are no extraneous/far away points.
 
 # 4) Independence of Errors
-  #***** visual check to see if data includes repeated measures (WHAT DOES THIS MEAN)*************************
+  # This assumption is not violated, as upon a visual check, the data does not appear to have any repeated measures.
 
 
 # Regression Equation:
-# log(intubated/(1-intubated)) = -2.1418297 + 0.0143261*age - 0.3001395*GenderWoman
+b0<-shortlogmodel$coefficients[1];b0
+b1<-shortlogmodel$coefficients[2];b1
+b2<-shortlogmodel$coefficients[3];b2
+probintubated<-exp(b0+b1)/(1+exp(b0+b1));probintubated
+# Regression Equation = exp(b0+b1*age+b2*GenderWoman)/(1+exp(b0+b1*age+b2*GenderWoman)) 
+
+# WILL DELETE: log(intubated/(1-intubated)) = -2.1418297 + 0.0143261*age - 0.3001395*GenderWoman
 
 # Interpretations:
 
@@ -62,7 +68,7 @@ exp(coef(shortlogmodel))
 # (Intercept)         age GenderWoman 
 #   0.1169510   1.0144292   0.7407149 
 # We can further interpret the age coefficient as for every one year increase in age, the odds of intubation increases by a  
-# factor of 1.0144292. In addition, for every (*******NEED TO REVISIT FOR CATEGORICAL*******)
+# factor of 1.0144292. In addition, the odds of a woman being intubated increases by a factor of 0.7407149. 
 
 
 # Calculating Model Accuracy and Error Rates
@@ -102,7 +108,7 @@ probs <- predict(logisticmodel, test, type="response")
 pred <- ifelse(probs>.5, "Yes", "No")
 
 mean(pred==test$intubated)
-# Test Accuracy Rate: 0.8178728
+  # Test Accuracy Rate: 0.8178728
   # Essentially, our model correctly classifies observations 81.79% of the time.
 
 mean(pred!=test$intubated)
@@ -115,12 +121,12 @@ table(pred, test$intubated)
   #   No  36091  8024
   #   Yes    14     5
 
-# Confusion Matrix Interpretation
-  # True Positives: 36091
-  # True Negatives: 5
-  # False Positives: 8024
-  # False Negatives: 14
-  
+# Interpretation
+# The True Positive is 36091, which means we correctly predicted the positive class (not intubated) 36091 times
+# The True Negative is 5, which means we correctly predicted the negative class (intubated) 5 times
+# The False Positive (Type I Error) is 8024, which means we incorrectly indicated 'not intubated' presents 8024 times
+# The False Negative (Type II Error) is 14, which means we incorrectly indicated 'intubated' presents 14 times
+
   # Specificity:
 5/(8024+5)
   # 0.0006227426
@@ -168,10 +174,10 @@ table(prediction$class, testtransformed$intubated)
 
 
 # Confusion Matrix Interpretation
-  # True Positives: 36080
-  # True Negatives: 11
-  # False Positives: 8018
-  # False Negatives: 25
+  # The True Positive is 36080, which means we correctly predicted the positive class (not intubated) 36080 times
+  # The True Negative is 11, which means we correctly predicted the negative class (intubated) 11 times
+  # The False Positive (Type I Error) is 8018, which means we incorrectly indicated 'not intubated' presents 8018 times
+  # The False Negative (Type II Error) is 25, which means we incorrectly indicated 'intubated' presents 25 times
 
   # Specificity:
 11/(8018+11)
@@ -187,15 +193,13 @@ table(prediction$class, testtransformed$intubated)
 
 # QDA MODEL
 qdamodel <- qda(intubated~., data=traintransformed)
-  # Error in qda.default(x, grouping, ...) : 
-  # some group is too small for 'qda'
-
-  # changing the train/testing group to p=.8 still gives this error message:
-      # "Error in qda.default(x, grouping, ...) : rank deficiency in group No"
+  # Error in qda.default(x, grouping, ...) : rank deficiency in group No
+  # changing the train/testing group to p=.8 still gives this error message.
 
   # Error Message Interpretation: As QDA is a more sophisticated technique, so it essentially needs a larger sample size.
-  # Essentially, this model will not run, as the sample size from our training data is not sufficient to create our model. 
-
+  # In addition, it appears that some variables in the dataset may be collinear and one or more covariance matrices cannot be
+  # inverted to obtain estimates. Therefore, this model will not run, as the sample size from our training data 
+  # is not sufficient to create our model. 
 
 #################################
 
@@ -205,7 +209,6 @@ plot(knnmodel)
 knnmodel$bestTune
   # The best k is 9
   # Essentially, the k with the highest accuracy is 9.
-
 
 knnclass <- predict(knnmodel, newdata=test)
 head(knnclass)
@@ -228,19 +231,23 @@ mean(knnclass!=test$intubated)
   # Test Error Rate: 0.1945892
   # Essentially, our model incorrectly classifies observations 19.46% of the time.
 
-confusionMatrix(knnclass, test$intubated)
-  # Sensitivity: 0.97372 
-      # We predicted our positive class No (not intubated) very well - about 97.37% of the time!
-  # Specificity: 0.04857 
-      # We did not predict our negative class Yes (intubated) very well - only about 4.86% of the time.
-
-  # Note: our positive class is "No"
-
 # Confusion Matrix Interpretation:
-  # True Positives: 35176
-  # True Negatives: 237
-  # False Positives: 7792
-  # False Negatives: 929
+  # The True Positive is 35156, which means we correctly predicted the positive class (not intubated) 35156 times
+  # The True Negative is 390, which means we correctly predicted the negative class (intubated) 390 times
+  # The False Positive (Type I Error) is 7639, which means we incorrectly indicated 'not intubated' presents 7639 times
+  # The False Negative (Type II Error) is 949, which means we incorrectly indicated 'intubated' presents 949 times
+
+confusionMatrix(knnclass, test$intubated)
+  # The Accuracy is 0.8053, which means the frequency that we correctly predicted classes is 0.8053
+  # The Confidence Interval is (0.8016, 0.809), which means that we are 95% confident that our accuracy rate will be between 0.8016 and 0.809
+  # The Sensitivity is 0.97347, which means the frequency that we predicted 'not intubated' when they are actually also 'not intubated' is 97.35%
+  # The Specificity is 0.04907, which means the frequency that we predicted 'intubated' when they are actually also 'intubated' is 4.91%
+  # The Pos Pred Value is 0.82154, which means when we predicted 'not intubated', 82.15% of them are correct
+  # The Neg Pred Value is 0.29142, which means when we predicted 'intubated', 29.14% of them are correct
+  # The Prevalence is 0.81808, which means 81.81% of the reference are not intubated, which have the condition of interest
+  # The Detection Rate is 0.79637, which means the frequency of correctly predicting 'not intubated' is 79.64%
+  # The Detection Prevalence is 0.96937, which means the frequency that we predicted 'not intubated' (positive class) is 96.94%
+  # The Balanced Accuracy is 0.51127, which means the average of Sensitivity and Specificity is 51.12%
 
 
 #################################
@@ -250,7 +257,7 @@ confusionMatrix(knnclass, test$intubated)
 # Logistic Model: 0.8178728
 # LDA: 0.8177596
 # QDA: N/A
-# KNN: 0.8023972    
+# KNN: 0.8054108    
 
 #################################
 
