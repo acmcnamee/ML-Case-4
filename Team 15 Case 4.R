@@ -82,26 +82,57 @@ mean(pred==covid$intubated)
 # PROBLEM 2
 # dividing the data into training and testing groups 
 library(caret)
-divideData <- createDataPartition(covid$intubated,p=.8, list=FALSE)
+divideData <- createDataPartition(covid$intubated,p=.3, list=FALSE)
 train <- covid[divideData,]
 test <- covid[-divideData,]
 
-## LOGISTIC REGRESSION   (****NEED HELP HERE***)
-logisticmodel <- glm(intubated~., data=train)
+#################################
 
-# Error in glm.fit(x = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  : 
-# NA/NaN/Inf in 'y'
-# In addition: Warning messages:
-  # 1: In Ops.factor(y, mu) : '-' not meaningful for factors
-  # 2: In Ops.factor(eta, offset) : '-' not meaningful for factors
-  # 3: In Ops.factor(y, mu) : '-' not meaningful for factors
-
+## LOGISTIC REGRESSION
+logisticmodel <- glm(intubated~., data=train, family=binomial)
 summary(logisticmodel)
 
 # Test Assumptions
 # 1) Linearity of the Logit
-# 2) Absense of Multicollinearity
+
+
+# 2) Absense of Multicollinearity (********NEED HELP HERE*********)
+vif(logisticmodel)
+
+
 # 3) Strongly Influential Outliers
+modelResults <- augment(checkinteract) %>% mutate(index=1:n())
+ggplot(modelResults, aes(index, .std.resid)) + geom_point(aes(color=intubated))
+ggplot(modelResults, aes(index,.cooksd))+ geom_point(aes(color=intubated))
+sum(abs(modelResults$.std.resid)>3)
+  # 0 - There appear to be 0 outliers present in our model.
+  # ****we are looking at point distance from the group - far away ones are potential outliers
+
+# 4) Independence of Errors
+#***** visual check to see if data includes repeated measures (WHAT DOES THIS MEAN)*************************
+
+
+# Regression Equation:
+## DO WE NEED THIS????
+
+# Interpretations:
+
+coef(logisticmodel)
+## DO WE ALSO NEED THESE?
+exp(coef(logisticmodel))
+
+
+
+# Calculating Model Accuracy and Error Rates      (****WHY ARE THESE NOT WORKING***********)
+probs <- predict(logisticmodel, type="response")
+pred <- ifelse(probs>.5, "Yes", "No")
+
+table(pred, test$intubated)              
+
+mean(pred!=test$intubated)
+# Test Error Rate: 
+mean(pred==test$intubated)
+# Test Accuracy Rate: 
 
 
 ###############################
