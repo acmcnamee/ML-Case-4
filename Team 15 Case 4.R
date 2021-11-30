@@ -51,9 +51,9 @@ b0<-shortlogmodel$coefficients[1];b0
 b1<-shortlogmodel$coefficients[2];b1
 b2<-shortlogmodel$coefficients[3];b2
 probintubated<-exp(b0+b1)/(1+exp(b0+b1));probintubated
+
 # Regression Equation = exp(b0+b1*age+b2*GenderWoman)/(1+exp(b0+b1*age+b2*GenderWoman)) 
 
-# WILL DELETE: log(intubated/(1-intubated)) = -2.1418297 + 0.0143261*age - 0.3001395*GenderWoman
 
 # Interpretations:
 
@@ -179,15 +179,18 @@ table(prediction$class, testtransformed$intubated)
   # The False Positive (Type I Error) is 8018, which means we incorrectly indicated 'not intubated' presents 8018 times
   # The False Negative (Type II Error) is 25, which means we incorrectly indicated 'intubated' presents 25 times
 
-  # Specificity:
-11/(8018+11)
-  # 0.001370034
-  # We did not predict our negative class Yes (intubated) very well - only about .14% of the time.
+confusionMatrix(prediction$class,testtransformed$intubated)
+  # The Accuracy is 0.818, which means the frequency that we correctly predicted classes is 0.818
+  # The Confidence Interval is (0.8141, 0.8214), which means that we are 95% confident that our accuracy rate will be between 0.8141 and 0.8214
+  # The Sensitivity is 0.99931, which means the frequency that we predicted 'not intubated' when they are actually also 'not intubated' is 99.931%
+  # The Specificity is 0.00137, which means the frequency that we predicted 'intubated' when they are actually also 'intubated' is 0.137%
+  # The Pos Pred Value is 0.81818, which means when we predicted 'not intubated', 81.81% of them are correct
+  # The Neg Pred Value is 0.30556, which means when we predicted 'intubated', 30.56% of them are correct
+  # The Prevalence is 0.81808, which means 81.81% of the reference are not intubated, which have the condition of interest
+  # The Detection Rate is 0.81751, which means the frequency of correctly predicting 'not intubated' is 81.75%
+  # The Detection Prevalence is 0.99918, which means the frequency that we predicted 'not intubated' (positive class) is 99.92%
+  # The Balanced Accuracy is 0.50034, which means the average of Sensitivity and Specificity is 50.03%
 
-  # Sensitivity:
-36080/(36080+25)
-  # 0.9993076
-  # We predicted our positive class No (no intubated) very well - about 99.93% of the time!
 
 #################################
 
