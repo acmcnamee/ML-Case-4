@@ -92,11 +92,6 @@ test <- covid[-divideData,]
 logisticmodel <- glm(intubated~., data=train, family=binomial)
 summary(logisticmodel)
 
-coef(logisticmodel)
-## DO WE ALSO NEED THESE?
-exp(coef(logisticmodel))
-
-
 # Calculating Model Accuracy and Error Rates
 probs <- predict(logisticmodel, test, type="response")
 pred <- ifelse(probs>.5, "Yes", "No")
@@ -127,10 +122,6 @@ library(MASS)
 ldamodel <- lda(intubated~., data=traintransformed)
 ldamodel
 
-##Graphing the LDA
-ldaforgraph <- cbind(traintransformed, predict(ldamodel)$x)
-ggplot(ldaforgraph, aes(LD1)) + geom_point(aes(color=intubated))  # how to graph when we only have 1 LD?
-
 ##Make predictions with the ldamodel using the transformed test data.
 covid.lda.values <- predict(ldamodel)
 covid.lda.values
@@ -148,6 +139,7 @@ table(prediction$class, testtransformed$intubated) # confusion matrix
 
 
 # Confusion Matrix Interpretation
+  # In the LDA Model, the 
 
 
 
@@ -198,6 +190,9 @@ confusionMatrix(knnclass, test$intubated)
   # Specificity: 0.04409
 
   # Note: our positive class is "No"
+
+# Confusion Matrix Interpretation:
+
 
 #################################
 
