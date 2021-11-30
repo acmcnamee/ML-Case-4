@@ -142,7 +142,7 @@ names(prediction) # "class"     "posterior" "x"
 mean(prediction$class == testtransformed$intubated) 
   # 0.8179182 = 81.79% Test Accuracy Rate; our model correctly classifies observations 81.79% of the time
 table(prediction$class, testtransformed$intubated) # confusion matrix
-#  No   Yes
+#         No   Yes
 #  No  36097  8028
 #  Yes     8     1
 
@@ -197,7 +197,7 @@ confusionMatrix(knnclass, test$intubated)
   # Sensitivity: 0.97751 
   # Specificity: 0.04409
 
-  # Note: our positive class is No
+  # Note: our positive class is "No"
 
 #################################
 
