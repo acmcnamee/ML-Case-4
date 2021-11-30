@@ -194,7 +194,7 @@ qdamodel <- qda(intubated~., data=traintransformed)
       # "Error in qda.default(x, grouping, ...) : rank deficiency in group No"
 
   # Error Message Interpretation: As QDA is a more sophisticated technique, so it essentially needs a larger sample size.
-  # Essentially, this model will not run, as the sample size from our data is not sufficient to create our model. 
+  # Essentially, this model will not run, as the sample size from our training data is not sufficient to create our model. 
 
 
 #################################
@@ -203,35 +203,36 @@ qdamodel <- qda(intubated~., data=traintransformed)
 knnmodel <- train(intubated~., data=train, method="knn", preProcess=c("center", "scale"))
 plot(knnmodel)
 knnmodel$bestTune
-# the best k is 5 (it is the one with the highest accuracy)
+  # The best k is 9
+  # Essentially, the k with the highest accuracy is 9.
 
 
 knnclass <- predict(knnmodel, newdata=test)
 head(knnclass)
-  # we need to make sure that we have our dependent variable (intubated) correct - it is correct here because we have those two levels
-  # of No and Yes
+  # we need to make sure that we have our dependent variable (intubated) correct - 
+  # it is correct here because we have those two levels of No and Yes
 
 ## Calculate Accuracy Rates:
 table(knnclass, test$intubated)
 # knnclass    No   Yes
-#      No  35176  7792
-#      Yes   929   237
+#      No  35156  7639
+#      Yes   949   390
 
 # Test Accuracy Rate
 mean(knnclass==test$intubated)
-  # Test Accuracy Rate: 0.8023972
-  # Essentially, our model correctly classifies observations 80.24% of the time.
+  # Test Accuracy Rate: 0.8054108
+  # Essentially, our model correctly classifies observations 80.54% of the time.
 
 # Test Error Rate
 mean(knnclass!=test$intubated)
-  # Test Error Rate: 0.1976028
-  # Essentially, our model incorrectly classifies observations 19.76% of the time.
+  # Test Error Rate: 0.1945892
+  # Essentially, our model incorrectly classifies observations 19.46% of the time.
 
 confusionMatrix(knnclass, test$intubated)
-  # Sensitivity: 0.97427
-      # We predicted our positive class No (not intubated) very well - about 97.43% of the time!
-  # Specificity: 0.02952
-      # We did not predict our negative class Yes (intubated) very well - only about 2.95% of the time.
+  # Sensitivity: 0.97372 
+      # We predicted our positive class No (not intubated) very well - about 97.37% of the time!
+  # Specificity: 0.04857 
+      # We did not predict our negative class Yes (intubated) very well - only about 4.86% of the time.
 
   # Note: our positive class is "No"
 
@@ -262,4 +263,5 @@ confusionMatrix(knnclass, test$intubated)
 # is intubated based on a variety of factors, makes it the most appropriate and effective model.
 
 
-
+### COMMENT ON THE SHAPE OF THE DATA
+# linear decision boundary
