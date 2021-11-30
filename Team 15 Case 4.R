@@ -263,9 +263,11 @@ confusionMatrix(knnclass, test$intubated)
 # is intubated based on a variety of factors, makes it the most appropriate and effective model.
 
 
-### COMMENT ON THE SHAPE OF THE DATA (******EDIT THESE*****)
-# linear decision boundary
-# LDA assumes that the observations are drawn from a Normal distribution with a common covariance matrix in each class, 
-# and so can provide some improvements over logistic regression when this assumption approximately holds. 
-# Conversely, logistic regression can outperform LDA if these Normal and covariance assumptions are not met.
+# In addition, based on the selection of the logistic model, we can make assumptions about the shape of the data. 
+# Specifically, when a logistic regression model is used, it assumes a linear decision boundary. As this model
+# has the highest accuracy out of all other models (LDA, QDA, and KNN), we can assume in selection that the data
+# has a fairly linear decision boundary. In addition,  LDA assumes that the observations are drawn from a Normal distribution 
+# with a common covariance matrix in each class,and so can provide some improvements over logistic regression when this 
+# assumption approximately holds. Conversely, logistic regression can outperform LDA if these Normal and covariance assumptions 
+# are not met, which could be another occurence with the covid dataset.
 
