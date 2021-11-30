@@ -92,47 +92,25 @@ test <- covid[-divideData,]
 logisticmodel <- glm(intubated~., data=train, family=binomial)
 summary(logisticmodel)
 
-# Test Assumptions
-# 1) Linearity of the Logit
-
-
-# 2) Absense of Multicollinearity (********NEED HELP HERE*********)
-vif(logisticmodel)
-
-
-# 3) Strongly Influential Outliers
-modelResults <- augment(checkinteract) %>% mutate(index=1:n())
-ggplot(modelResults, aes(index, .std.resid)) + geom_point(aes(color=intubated))
-ggplot(modelResults, aes(index,.cooksd))+ geom_point(aes(color=intubated))
-sum(abs(modelResults$.std.resid)>3)
-  # 0 - There appear to be 0 outliers present in our model.
-  # ****we are looking at point distance from the group - far away ones are potential outliers
-
-# 4) Independence of Errors
-#***** visual check to see if data includes repeated measures (WHAT DOES THIS MEAN)*************************
-
-
-# Regression Equation:
-## DO WE NEED THIS????
-
-# Interpretations:
-
 coef(logisticmodel)
 ## DO WE ALSO NEED THESE?
 exp(coef(logisticmodel))
 
 
-
-# Calculating Model Accuracy and Error Rates      (****WHY ARE THESE NOT WORKING***********)
-probs <- predict(logisticmodel, type="response")
+# Calculating Model Accuracy and Error Rates
+probs <- predict(logisticmodel, test, type="response")
 pred <- ifelse(probs>.5, "Yes", "No")
 
 table(pred, test$intubated)              
+# pred     No   Yes
+#   No  36103  8028
+#   Yes     2     1
+
+mean(pred==test$intubated)
+# Test Accuracy Rate: 0.8180541
 
 mean(pred!=test$intubated)
-# Test Error Rate: 
-mean(pred==test$intubated)
-# Test Accuracy Rate: 
+# Test Error Rate: 0.1819459
 
 
 ###############################
@@ -148,19 +126,6 @@ testtransformed <- preprocessing %>% predict(test)
 library(MASS)
 ldamodel <- lda(intubated~., data=traintransformed)
 ldamodel
-
-# Checking assumptions
-# 1) No strongly influential outliers
-# 2) Multivariate normality
-# 3) Multicollinearity
-vif(ldamodel)
-
-# 4) Homoscedasticity
-library(lmtest)
-bptest(ldamodel)
-
-# 5) Independence (no repeated measures)***
-
 
 ##Graphing the LDA
 ldaforgraph <- cbind(traintransformed, predict(ldamodel)$x)
@@ -181,10 +146,6 @@ table(prediction$class, testtransformed$intubated) # confusion matrix
 #  No  36097  8028
 #  Yes     8     1
 
-
-# LDA Regression Equation
-
-# Interpretation
 
 # Confusion Matrix Interpretation
 
@@ -213,44 +174,49 @@ knnmodel$bestTune
 # the best k is 5 (it is the one with the highest accuracy)
 
 
-# Make predictions
 knnclass <- predict(knnmodel, newdata=test)
 head(knnclass)
   # we need to make sure that we have our dependent variable (intubated) correct - it is correct here because we have those two levels
-  # of Nonowner and Owner (********CHANGE THIS**************)
+  # of No and Yes
 
 ## Calculate Accuracy Rates:
 table(knnclass, test$intubated)
-
-
+  # knnclass    No   Yes
+  #      No  35293  7675
+  #      Yes   812   354
 
 # Test Accuracy Rate
 mean(knnclass==test$intubated)
+  # Test Accuracy Rate: 0.8076993
 
 # Test Error Rate
 mean(knnclass!=test$intubated)
+  # Test Error Rate:  0.1923007
 
 confusionMatrix(knnclass, test$intubated)
+  # Sensitivity: 0.97751 
+  # Specificity: 0.04409
 
-# Confusion Matrix Interpretation
-
+  # Note: our positive class is No
 
 #################################
-
 
 # COMPARING ACCURACY RATES
 
-# Logistic Model:
-# LDA:
-# QDA:
-# KNN:
+# Logistic Model: 0.8180541
+# LDA: 0.8179182
+# QDA: N/A
+# KNN: 0.8077    
 
 #################################
 
-
 # CONCLUSION AND ANALYSIS
 
-
+# Based on an analysis of the accuracy and error rates for the logistic, LDA, QDA, and KNN models
+# when applied to the covid dataset, our recommendation is to select the Logistic Model, as it has the highest
+# shared accuracy rate with LDA and is more parsimonious in nature. Essentially, the relatively easier
+# interpretability of the logistic model, combined with its high accuracy rate in predicting whether or not a patient
+# is intubated based on a variety of factors, makes it the most appropriate and effective model.
 
 
 
