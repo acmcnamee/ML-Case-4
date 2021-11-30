@@ -50,7 +50,7 @@ sum(abs(modelResults$.std.resid)>3)
 b0<-shortlogmodel$coefficients[1];b0
 b1<-shortlogmodel$coefficients[2];b1
 b2<-shortlogmodel$coefficients[3];b2
-probintubated<-exp(b0+b1)/(1+exp(b0+b1));probintubated
+probintubated<-exp(b0+b1+b2)/(1+exp(b0+b1+b2));probintubated
 
 # Regression Equation = exp(b0+b1*age+b2*GenderWoman)/(1+exp(b0+b1*age+b2*GenderWoman)) 
 
