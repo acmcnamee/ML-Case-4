@@ -120,6 +120,16 @@ table(pred, test$intubated)
   # True Negatives: 5
   # False Positives: 8024
   # False Negatives: 14
+  
+  # Specificity:
+5/(8024+5)
+  # 0.0006227426
+  # We did not predict our negative class Yes (intubated) very well - only about .06% of the time.
+
+  # Sensitivity:
+36091/(36091+14)
+  # 0.9996122
+  # We predicted our positive class No (not intubated) very well - about 99.9% of the time!
 
 ###############################
 
@@ -163,7 +173,15 @@ table(prediction$class, testtransformed$intubated)
   # False Positives: 8018
   # False Negatives: 25
 
+  # Specificity:
+11/(8018+11)
+  # 0.001370034
+  # We did not predict our negative class Yes (intubated) very well - only about .14% of the time.
 
+  # Sensitivity:
+36080/(36080+25)
+  # 0.9993076
+  # We predicted our positive class No (no intubated) very well - about 99.93% of the time!
 
 #################################
 
@@ -211,7 +229,9 @@ mean(knnclass!=test$intubated)
 
 confusionMatrix(knnclass, test$intubated)
   # Sensitivity: 0.97427
+      # We predicted our positive class No (not intubated) very well - about 97.43% of the time!
   # Specificity: 0.02952
+      # We did not predict our negative class Yes (intubated) very well - only about 2.95% of the time.
 
   # Note: our positive class is "No"
 
