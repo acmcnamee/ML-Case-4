@@ -71,15 +71,20 @@ pred<-ifelse(probs>.5, "Yes", "No")
 table(pred, covid$intubated)              
 # pred    No   Yes
 #   No 51579 11470
-mean(pred!=covid$intubated)
-  # Error Rate: 0.181922
+
 mean(pred==covid$intubated)
   # Accuracy Rate: 0.818078
+  # Essentially, our model correctly classifies observations 81.81% of the time.
 
+mean(pred!=covid$intubated)
+# Error Rate: 0.181922
+# Essentially, our model incorrectly classifies observations 18.19% of the time.
 
 #################################
 
 # PROBLEM 2
+set.seed(100)
+
 # dividing the data into training and testing groups 
 library(caret)
 divideData <- createDataPartition(covid$intubated,p=.3, list=FALSE)
@@ -96,17 +101,25 @@ summary(logisticmodel)
 probs <- predict(logisticmodel, test, type="response")
 pred <- ifelse(probs>.5, "Yes", "No")
 
-table(pred, test$intubated)              
-# pred     No   Yes
-#   No  36103  8028
-#   Yes     2     1
-
 mean(pred==test$intubated)
-# Test Accuracy Rate: 0.8180541
+# Test Accuracy Rate: 0.8178728
+  # Essentially, our model correctly classifies observations 81.79% of the time.
 
 mean(pred!=test$intubated)
-# Test Error Rate: 0.1819459
+  # Test Error Rate: 0.1821272
+  # Essentially, our model incorrectly classifies observations 18.21% of the time.
 
+# Confusion Matrix
+table(pred, test$intubated)              
+  # pred     No   Yes
+  #   No  36091  8024
+  #   Yes    14     5
+
+# Confusion Matrix Interpretation
+  # True Positives: 36091
+  # True Negatives: 5
+  # False Positives: 8024
+  # False Negatives: 14
 
 ###############################
 
@@ -130,16 +143,25 @@ prediction <- ldamodel %>% predict(testtransformed)
 names(prediction) # "class"     "posterior" "x"
 
 ## Calculating accuracy rates
-mean(prediction$class == testtransformed$intubated) 
-  # 0.8179182 = 81.79% Test Accuracy Rate; our model correctly classifies observations 81.79% of the time
-table(prediction$class, testtransformed$intubated) # confusion matrix
+mean(prediction$class==testtransformed$intubated) 
+  # 0.8177596 = 81.78% Test Accuracy Rate
+  # Essentially, our model correctly classifies observations 81.78% of the time.
+mean(prediction$class!=testtransformed$intubated) 
+  # Test Error Rate:  0.1822404
+  # Essentially, our model incorrectly classifies observations 18.22% of the time.
+
+# Confusion Matrix
+table(prediction$class, testtransformed$intubated)
 #         No   Yes
-#  No  36097  8028
-#  Yes     8     1
+#  No  36080  8018
+#  Yes    25    11
 
 
 # Confusion Matrix Interpretation
-  # In the LDA Model, the 
+  # True Positives: 36080
+  # True Negatives: 11
+  # False Positives: 8018
+  # False Negatives: 25
 
 
 
@@ -173,35 +195,41 @@ head(knnclass)
 
 ## Calculate Accuracy Rates:
 table(knnclass, test$intubated)
-  # knnclass    No   Yes
-  #      No  35293  7675
-  #      Yes   812   354
+# knnclass    No   Yes
+#      No  35176  7792
+#      Yes   929   237
 
 # Test Accuracy Rate
 mean(knnclass==test$intubated)
-  # Test Accuracy Rate: 0.8076993
+  # Test Accuracy Rate: 0.8023972
+  # Essentially, our model correctly classifies observations 80.24% of the time.
 
 # Test Error Rate
 mean(knnclass!=test$intubated)
-  # Test Error Rate:  0.1923007
+  # Test Error Rate: 0.1976028
+  # Essentially, our model incorrectly classifies observations 19.76% of the time.
 
 confusionMatrix(knnclass, test$intubated)
-  # Sensitivity: 0.97751 
-  # Specificity: 0.04409
+  # Sensitivity: 0.97427
+  # Specificity: 0.02952
 
   # Note: our positive class is "No"
 
 # Confusion Matrix Interpretation:
+  # True Positives: 35176
+  # True Negatives: 237
+  # False Positives: 7792
+  # False Negatives: 929
 
 
 #################################
 
 # COMPARING ACCURACY RATES
 
-# Logistic Model: 0.8180541
-# LDA: 0.8179182
+# Logistic Model: 0.8178728
+# LDA: 0.8177596
 # QDA: N/A
-# KNN: 0.8077    
+# KNN: 0.8023972    
 
 #################################
 
