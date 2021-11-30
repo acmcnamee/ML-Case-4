@@ -263,5 +263,9 @@ confusionMatrix(knnclass, test$intubated)
 # is intubated based on a variety of factors, makes it the most appropriate and effective model.
 
 
-### COMMENT ON THE SHAPE OF THE DATA
+### COMMENT ON THE SHAPE OF THE DATA (******EDIT THESE*****)
 # linear decision boundary
+# LDA assumes that the observations are drawn from a Normal distribution with a common covariance matrix in each class, 
+# and so can provide some improvements over logistic regression when this assumption approximately holds. 
+# Conversely, logistic regression can outperform LDA if these Normal and covariance assumptions are not met.
+
