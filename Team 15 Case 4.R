@@ -40,7 +40,7 @@ ggplot(modelResults, aes(index, .std.resid)) + geom_point(aes(color=intubated))
 ggplot(modelResults, aes(index,.cooksd))+ geom_point(aes(color=intubated))
 sum(abs(modelResults$.std.resid)>3)
   # 0 - There appear to be 0 outliers present in our model.
-  # ****we are looking at point distance from the group - far away ones are potential outliers
+  # A visual check with the ggplot also confirms that there are no extraneous/far away points.
 
 # 4) Independence of Errors
   #***** visual check to see if data includes repeated measures (WHAT DOES THIS MEAN)*************************
