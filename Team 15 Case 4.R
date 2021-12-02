@@ -270,7 +270,8 @@ confusionMatrix(knnclass, test$intubated)
 # when applied to the covid dataset, our recommendation is to select the Logistic Model, as it has the highest
 # shared accuracy rate with LDA and is more parsimonious in nature. Essentially, the relatively easier
 # interpretability of the logistic model, combined with its high accuracy rate in predicting whether or not a patient
-# is intubated based on a variety of factors, makes it the most appropriate and effective model.
+# is intubated based on a variety of factors, makes it the most appropriate and effective model. However, although we
+# recommend a logistic model, the use of the LDA technique would also fit the data well.
 
 
 # In addition, based on the selection of the logistic model, we can make assumptions about the shape of the data. 
